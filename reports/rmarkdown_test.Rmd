@@ -1,0 +1,77 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+  word_document:
+    reference_docx: ../common/rmarkdown_test-templ1.docx
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      warning = FALSE,
+                      message = FALSE)
+library(readr)
+library(tidyverse)
+library(knitr)
+library(lubridate)
+library(timetk)
+```
+
+# R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars, echo = FALSE)
+```
+
+## Including Plots
+
+You can also embed plots, for example like this:
+
+```{r pressure}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r dnv_demand_L, echo= FALSE, fig.width = 3}
+setwd("../")
+dnv_demand_L <- read_csv2("data/dnv_demand_L.csv", col_types = cols(Year = "d"))
+#knitr::kable(head(dnv_demand_L, "html"))
+df <- dnv_demand_L %>%
+group_by(Variable, Unit) %>%
+summarise(
+Value = sum(value)) %>%
+ungroup()
+#kable(dnv_demand_L)
+a <- getwd()
+#print(a)
+summary(df)
+knitr::kable(df, "html", caption = "html, no head")
+knitr::kable(head(df, "html"), caption = "html with head", align = "lccrr", digits = 2)
+
+```
+# Make a table
+
+Create a subset of the mtcars data.
+
+```{r fig.width = 3}
+knitr::kable(head(df, "html"))
+#tibble::print.tbl_df
+```
+
+
+
+```{r }
+wd <- getwd()
+time_series <- read_csv2("../data/time_series.csv")
+knitr::kable(time_series[1:10,])
+```
+```{r }
+time_series %>% 
+     plot_time_series(Time, Value, 
+                            .plotly_slider = TRUE)
+```
